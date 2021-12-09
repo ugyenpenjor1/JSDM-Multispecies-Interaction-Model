@@ -1,4 +1,4 @@
-# R scripts and data to run multispecies occupancy model for two or more interacting species of [Rota *et al.,* 2016 Methods in Ecology and Evolution] (https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12587)
+# R scripts and data to run multispecies occupancy model for two or more interacting species of [Rota *et al.,* 2016 Methods in Ecology and Evolution] (https://doi.org/10.1111/2041-210X.12587)
 
 This repo will demonstrate to load and run the model. The codes are annotated for readability.
 
