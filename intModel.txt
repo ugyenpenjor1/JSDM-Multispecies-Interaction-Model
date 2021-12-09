@@ -1,0 +1,201 @@
+
+
+model{
+	
+	# Priors
+	# First order psi
+	betaT[1] <- logit(mean.psiT)					# first order (fo) occupancy intercepts
+	betaL[1] <- logit(mean.psiL)
+	betaD[1] <- logit(mean.psiD)
+	mean.psiT[1] ~ dunif(0, 1)
+	mean.psiL[1] ~ dunif(0, 1)
+	mean.psiD[1] ~ dunif(0, 1)
+	
+	# First order psi priors
+	for(fo_psi in 2:nfirst_order_psi) {          # first order (fo) occupancy slopes
+		betaT[fo_psi] ~ dnorm(0, 0.1)
+		betaL[fo_psi] ~ dnorm(0, 0.1)
+		betaD[fo_psi] ~ dnorm(0, 0.1)
+	}
+	
+	# Second order psi priors
+	for(so_psi in 1:nsecond_order_psi) {         
+		betaTL[so_psi] ~ dnorm(0, 0.1)
+		betaTD[so_psi] ~ dnorm(0, 0.1)
+		betaLD[so_psi] ~ dnorm(0, 0.1) 
+	}
+	
+	# First order detection priors (rho)    
+	alphaT[1] <- logit(mean.pT)                 # first order (fo) detection intercepts
+	alphaL[1] <- logit(mean.pL)
+	alphaD[1] <- logit(mean.pD)
+	mean.pT ~ dunif(0, 1)
+	mean.pL ~ dunif(0, 1)
+	mean.pD ~ dunif(0, 1)
+	for(fo_rho in 2:nfirst_order_rho) {        # first order (fo) detection slopes
+		alphaT[fo_rho] ~ dnorm(0, 0.1)
+		alphaL[fo_rho] ~ dnorm(0, 0.1)
+		alphaD[fo_rho] ~ dnorm(0, 0.1)
+	}
+	
+	# Second order detection priors (rho)
+	# none in this model
+	
+	# Likelihood
+	# (1) Basic hierarchical model: states and observations
+	# Latent state model
+	for(i in 1:nsites) {
+		z[i] ~ dcat( lsv[i, ( 1:ncat )] )
+	}
+	# Detection model
+	for(i in 1:nsites) {
+		for(j in 1:nsurveys) {
+			y[i, j] ~ dcat( rdm[i, j, ( 1:ncat ), z[i] ] )
+		}
+	}
+	
+	# (2) Define the latent state vector and the observation matrices
+	for(i in 1:nsites) {
+		# Latent state probabilities in latent state vector (lsv)
+		# Probabilities for each state
+		lsv[i, 1] <- 1   #------------------------------------------| U
+		lsv[i, 2] <- exp( psiT[i] )   #-----------------------------| T
+		lsv[i, 3] <- exp( psiL[i] )   #-----------------------------| L
+		lsv[i, 4] <- exp( psiD[i] )   #-----------------------------| D
+		lsv[i, 5] <- exp( psiTL[i] )   #----------------------------| TL
+		lsv[i, 6] <- exp( psiLD[i] )   #----------------------------| LD
+		lsv[i, 7] <- exp( psiTD[i] )   #----------------------------| TD
+		lsv[i, 8] <- exp( psiTLD[i] )   #---------------------------| TLD
+
+	for(j in 1:nsurveys) {
+		# Detection matrix (OS = observed state, TS = true state)
+		# rdm = rho detection matrix. Each row sums to 1
+		# OS along rows, TS along columns
+		
+		# True state = U
+		rdm[i, j, 1, 1] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 1] <- 0   #-----------------------------------| OS = T
+		rdm[i, j, 3, 1] <- 0   #-----------------------------------| OS = L
+		rdm[i, j, 4, 1] <- 0   #-----------------------------------| OS = D
+		rdm[i, j, 5, 1] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 1] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 1] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 1] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = T
+		rdm[i, j, 1, 2] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 2] <- exp( rhoT[i, j] )   #-------------------| OS = T
+		rdm[i, j, 3, 2] <- 0   #-----------------------------------| OS = L
+		rdm[i, j, 4, 2] <- 0   #-----------------------------------| OS = D
+		rdm[i, j, 5, 2] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 2] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 2] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 2] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = L
+		rdm[i, j, 1, 3] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 3] <- 0   #-----------------------------------| OS = T
+		rdm[i, j, 3, 3] <- exp( rhoL[i, j] )   #-------------------| OS = L
+		rdm[i, j, 4, 3] <- 0   #-----------------------------------| OS = D
+		rdm[i, j, 5, 3] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 3] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 3] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 3] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = D
+		rdm[i, j, 1, 4] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 4] <- 0   #-----------------------------------| OS = T
+		rdm[i, j, 3, 4] <- 0   #-----------------------------------| OS = L
+		rdm[i, j, 4, 4] <- exp( rhoD[i, j] )   #-------------------| OS = D
+		rdm[i, j, 5, 4] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 4] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 4] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 4] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = TL
+		rdm[i, j, 1, 5] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 5] <- exp( rhoTL[i, j] )   #------------------| OS = T
+		rdm[i, j, 3, 5] <- exp( rhoLT[i, j] )   #------------------| OS = L
+		rdm[i, j, 4, 5] <- 0   #-----------------------------------| OS = D
+		rdm[i, j, 5, 5] <- exp( rhoTL[i, j] + rhoLT[i, j] )   #----| OS = TL
+		rdm[i, j, 6, 5] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 5] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 5] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = LD
+		rdm[i, j, 1, 6] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 6] <- 0   #-----------------------------------| OS = T
+		rdm[i, j, 3, 6] <- exp( rhoLD[i, j] )   #------------------| OS = L
+		rdm[i, j, 4, 6] <- exp( rhoDL[i, j] )   #------------------| OS = D
+		rdm[i, j, 5, 6] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 6] <- exp( rhoLD[i, j] + rhoDL[i, j] )   #----| OS = LD
+		rdm[i, j, 7, 6] <- 0   #-----------------------------------| OS = TD
+		rdm[i, j, 8, 6] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = TD
+		rdm[i, j, 1, 7] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 7] <- exp( rhoTD[i, j] )   #------------------| OS = T
+		rdm[i, j, 3, 7] <- 0   #-----------------------------------| OS = L
+		rdm[i, j, 4, 7] <- exp( rhoDT[i, j] )   #------------------| OS = D
+		rdm[i, j, 5, 7] <- 0   #-----------------------------------| OS = TL
+		rdm[i, j, 6, 7] <- 0   #-----------------------------------| OS = LD
+		rdm[i, j, 7, 7] <- exp( rhoTD[i, j] + rhoDT[i, j] )   #----| OS = TD
+		rdm[i, j, 8, 7] <- 0   #-----------------------------------| OS = TLD
+		
+		# True state = TLD
+		rdm[i, j, 1, 8] <- 1   #-----------------------------------| OS = U
+		rdm[i, j, 2, 8] <- exp( rhoTLD[i, j] )   #-----------------| OS = T
+		rdm[i, j, 3, 8] <- exp( rhoLTD[i, j] )   #-----------------| OS = L
+		rdm[i, j, 4, 8] <- exp( rhoDTL[i, j] )   #-----------------| OS = D
+		rdm[i, j, 5, 8] <- exp( rhoTLD[i, j] + rhoLTD[i, j] )   #--| OS = TL
+		rdm[i, j, 6, 8] <- exp( rhoLTD[i, j] + rhoDTL[i, j] )   #--| OS = LD
+		rdm[i, j, 7, 8] <- exp( rhoTLD[i, j] + rhoDTL[i, j] )   #--| OS = TD
+		rdm[i, j, 8, 8] <- exp( rhoTLD[i, j] + rhoLTD[i, j] + rhoDTL[i, j] )   #-| OS = TLD
+	}
+	
+	# (3) Specify linear models for the paramters in lsv and rdm
+	# Linear models for the occupancy parameters
+	
+	# ... for states T, L, and D
+	psiT[i] <- inprod( betaT, psi_cov[i, ] )
+	psiL[i] <- inprod( betaL, psi_cov[i, ] )
+	psiD[i] <- inprod( betaD, psi_cov[i, ] )
+	
+	# ... for states TL, LD, TD (in that order)
+	psiTL[i] <- psiT[i] + psiL[i] + inprod( betaTL, psi_inxs_cov[i, ] )
+	psiLD[i] <- psiL[i] + psiD[i] + inprod( betaLD, psi_inxs_cov[i, ] )
+	psiTD[i] <- psiT[i] + psiD[i] + inprod( betaTD, psi_inxs_cov[i, ] )
+	
+	# ... for state TLD
+	psiTLD[i] <- psiT[i] + psiL[i] + psiD[i] + 
+				      inprod( betaTL, psi_inxs_cov[i, ] ) + 
+				      inprod( betaLD, psi_inxs_cov[i, ] ) + 
+				      inprod( betaTD, psi_inxs_cov[i, ] )
+	
+	
+	# Linear models for the detection parameters
+	# => Here we could specifiy detection interactions as well
+	  for(j in 1:nsurveys) {
+	  	# Baseline detection linear predictors
+	  	
+	  	#  do not incorporate interactions.
+	  	rhoT[i, j] <- inprod( alphaT, rho_cov[i, j, ] )
+	  	rhoL[i, j] <- inprod( alphaL, rho_cov[i, j, ] )
+	  	rhoD[i, j] <- inprod( alphaD, rho_cov[i, j, ] )
+	  	
+	  	# Asymmetric interactions between all 3 species
+	  	rhoTL[i, j] <- rhoT[i, j]
+	  	rhoTD[i, j] <- rhoT[i, j]
+	  	rhoLT[i, j] <- rhoL[i, j]
+	  	rhoLD[i, j] <- rhoL[i, j]
+	  	rhoDT[i, j] <- rhoD[i, j]
+	  	rhoDL[i, j] <- rhoD[i, j]
+	  	
+	  	# Asymmetric interactions when all 3 species are present
+	  	rhoTLD[i, j] <- rhoT[i, j]
+	  	rhoLTD[i, j] <- rhoL[i, j]
+	  	rhoDTL[i, j] <- rhoD[i, j]
+	  }
+  }
+}
+
