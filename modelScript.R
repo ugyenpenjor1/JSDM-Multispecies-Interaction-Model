@@ -21,7 +21,7 @@ str(ylist)
 # Species detection as an array (site x rep x species)
 str(y)
 
-# Get sample sizes
+# Get sample sizes - constants
 ( nsites <- dim(y)[1] )			# sites
 ( nsurveys <- dim(y)[2] )		# surveys
 ( nspec <- dim(y)[3] )			# species
@@ -119,7 +119,7 @@ inits <- function() list(z = zcat)
 params <- c('betaT', 'betaL', 'betaD', 'betaTL', 'betaTD', 'betaLD', 'alphaT', 'alphaL', 'alphaD', 'mean.psiT', 'mean.psiL', 'mean.psiD', 'mean.pT', 'mean.pL', 'mean.pD', 'z')
 
 # Call JAGS ~ 10 hrs for 1000 iter (!)
-outMod <- jags(bdata, inits, params, 'intModel.txt', n.chains = 3, n.adapt = 5000, n.burnin = 3000, n.iter = 50000, n.thin = 20, parallel = TRUE)
+outMod <- jags(bdata, inits, params, 'intModel.txt', n.chains = 3, n.adapt = 5000, n.burnin = 1000, n.iter = 50000, n.thin = 20, parallel = TRUE)
 
 print(outMod)
 
