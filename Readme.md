@@ -4,7 +4,7 @@ This repo will demonstrate to load and run the model. The codes are annotated fo
 
 For convenience and to remove clutter, the data have been cleaned but for safety reasons (because the study species are globally endangered) we do not provide GPS locations. 
 
-Data includes detection histories of tiger, leopard and dhole.
+Data include detection histories of tiger, leopard and dhole.
 
 Total number of sites = 849
 
