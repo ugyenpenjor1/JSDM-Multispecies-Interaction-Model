@@ -24,4 +24,4 @@ Details:
 Trail = (binary) coded 1/0 for camera traps placed on- or off-trail
 Disturb = daily encounter rates of humans, livestock and domestic dogs at each camera station
 
-# The manuscript is *in press* in Proceedings of the Royal Society B. Please contact ugyenpenjor.bt@gmail.com to get a copy of the accepted version but it will be an open access once published.
+The manuscript is *in press* in Proceedings of the Royal Society B. Please contact ugyenpenjor.bt@gmail.com to get a copy of the accepted version but it will be an open access once published.
