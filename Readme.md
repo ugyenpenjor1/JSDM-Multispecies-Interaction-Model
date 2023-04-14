@@ -1,6 +1,6 @@
 # R scripts and data to run multispecies occupancy model for two or more interacting species of Rota *et al.,* 2016 [Methods in Ecology and Evolution] (https://doi.org/10.1111/2041-210X.12587)
 
-This repo will demonstrate to load and run the model. The codes are annotated for readability.
+This repo will demonstrate to load and run the joint species distribution model. The codes are annotated for readability.
 
 For convenience and to remove clutter, the data have been cleaned but for security reasons (because the study species are globally endangered) we do not provide GPS locations. 
 
