@@ -62,7 +62,7 @@ ycat <- apply(ycat, 2, as.numeric) # check for warnings produced by NAs in obser
 # Prepare covariate 
 
 # Marginal occupancy covariates
-psi_cov <- matrix(NA, ncol = 6, nrow = nsites)
+psi_cov <- matrix(NA, ncol=6, nrow=nsites)
 psi_cov[, 1] <- 1					# Intercept
 psi_cov[, 2] <- settlement				
 psi_cov[, 3] <- forest
@@ -71,12 +71,12 @@ psi_cov[, 5] <- gaur
 psi_cov[, 6] <- serow
 
 # Interaction covariates
-psi_inxs_cov <- matrix(NA, ncol = 2, nrow = nsites)
+psi_inxs_cov <- matrix(NA, ncol=2, nrow=nsites)
 psi_inxs_cov[, 1] <- 1					# Intercept
 psi_inxs_cov[, 2] <- settlement			
 
 # Detection covariate
-rho_cov <- array(NA, dim = c(nsites, nsurveys, 3))
+rho_cov <- array(NA, dim=c(nsites, nsurveys, 3))
 rho_cov[,, 1] <- 1					# Intercept
 rho_cov[,, 2] <- Trail	
 rho_cov[,, 3] <- Disturb
@@ -85,17 +85,17 @@ rho_cov[,, 3] <- Disturb
 rho_inxs_cov <- rep(1, nsites)		# Intercept
 
 # Bundle and summarise data set
-str( bdata <- list(y = ycat, psi_cov = psi_cov,
-                   psi_inxs_cov = psi_inxs_cov, 
-                   rho_cov = rho_cov, 
-                   rho_inxs_cov = rho_inxs_cov, 
-                   nsites = nsites, nsurveys = nsurveys, nfirst_order_psi = ncol(psi_cov), nsecond_order_psi = ncol(psi_inxs_cov), 
-                   nfirst_order_rho = dim(rho_cov)[3], nsecond_order_rho = 1, ncat = ncat) )
+str( bdata <- list(y=ycat, psi_cov=psi_cov,
+                   psi_inxs_cov=psi_inxs_cov, 
+                   rho_cov=rho_cov, 
+                   rho_inxs_cov=rho_inxs_cov, 
+                   nsites=nsites, nsurveys=nsurveys, nfirst_order_psi=ncol(psi_cov), nsecond_order_psi=ncol(psi_inxs_cov), 
+                   nfirst_order_rho=dim(rho_cov)[3], nsecond_order_rho=1, ncat=ncat) )
 
 
 # Set initial values
 # Get the maximum possible states across all potential surveys at a site
-zinit <- apply(y, c(1,3), sum, na.rm = TRUE)
+zinit <- apply(y, c(1,3), sum, na.rm=TRUE)
 zinit[zinit > 1] <- 1           # make binary
 
 # Convert to a category
@@ -113,13 +113,13 @@ zcat[zcat == "111"] <- 8       # all three present
 zcat <- as.numeric(zcat)
 
 # Inits function
-inits <- function() list(z = zcat)
+inits <- function() list(z=zcat)
 
 # Parameters wanted
 params <- c('betaT', 'betaL', 'betaD', 'betaTL', 'betaTD', 'betaLD', 'alphaT', 'alphaL', 'alphaD', 'mean.psiT', 'mean.psiL', 'mean.psiD', 'mean.pT', 'mean.pL', 'mean.pD', 'z')
 
 # Call JAGS ~ 10 hrs for 1000 iter (!)
-outMod <- jags(bdata, inits, params, 'intModel.txt', n.chains = 3, n.adapt = 5000, n.burnin = 1000, n.iter = 50000, n.thin = 20, parallel = TRUE)
+outMod <- jags(bdata, inits, params, 'intModel.txt', n.chains=3, n.adapt=5000, n.burnin=1000, n.iter=50000, n.thin=20, parallel=TRUE)
 
 print(outMod)
 
