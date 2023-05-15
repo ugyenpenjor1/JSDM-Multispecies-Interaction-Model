@@ -25,9 +25,9 @@ str(y)
 ( nsites <- dim(y)[1] )			# sites
 ( nsurveys <- dim(y)[2] )		# surveys
 ( nspec <- dim(y)[3] )			# species
-( ncat <- 2^nspec )				# possible community states
+( ncat <- 2^nspec )				  # possible community states
 
-# Prepare site covariates for occupancy
+# Prepare site covariates for occupancy (note that we are standardising using the scale() function)
 settlement <- scale(dataList1$covars[, 'set'])
 forest <- scale(dataList1$covars[, 'forest'])
 sambar <- scale(dataList1$covars[, 'sam'])
@@ -40,10 +40,8 @@ Trail <- dataList1$covars[, 'trail']
 
 # Convert to matrix
 Trail <- matrix(cbind(rep(Trail, 4)), ncol=4)
-head(Trail)
 
 Disturb <- matrix(cbind(rep(Disturb, 4)), ncol=4)
-head(Disturb)
 
 # Condense multi-species detection array to be site x survey
 ycat <- apply(y, c(1,2), paste, collapse="")
@@ -57,7 +55,7 @@ ycat[ycat == "101"] <- 7               # Tiger and dhole ('TD')
 ycat[ycat == "111"] <- 8               # All three species ('TLD')
 
 # Convert each column to a numeric: this is our response variable
-ycat <- apply(ycat, 2, as.numeric) # check for warnings produced by NAs in observation
+ycat <- apply(ycat, 2, as.numeric)     # check for warnings produced by NAs in observation
 
 # Prepare covariate 
 
@@ -82,7 +80,7 @@ rho_cov[,, 2] <- Trail
 rho_cov[,, 3] <- Disturb
 
 # Detection - interaction
-rho_inxs_cov <- rep(1, nsites)		# Intercept
+rho_inxs_cov <- rep(1, nsites)		# Intercept only
 
 # Bundle and summarise data set
 str( bdata <- list(y=ycat, psi_cov=psi_cov,
@@ -96,11 +94,11 @@ str( bdata <- list(y=ycat, psi_cov=psi_cov,
 # Set initial values
 # Get the maximum possible states across all potential surveys at a site
 zinit <- apply(y, c(1,3), sum, na.rm=TRUE)
-zinit[zinit > 1] <- 1           # make binary
+zinit[zinit > 1] <- 1           # convert to binary
 
 # Convert to a category
 zcat <- apply(zinit, 1, paste, collapse = "")
-zcat[zcat == "000"] <- 1       # nobody there
+zcat[zcat == "000"] <- 1       # no species here
 zcat[zcat == "100"] <- 2       # only tiger 
 zcat[zcat == "010"] <- 3       # only leopard
 zcat[zcat == "001"] <- 4       # only dhole
@@ -118,7 +116,7 @@ inits <- function() list(z=zcat)
 # Parameters wanted
 params <- c('betaT', 'betaL', 'betaD', 'betaTL', 'betaTD', 'betaLD', 'alphaT', 'alphaL', 'alphaD', 'mean.psiT', 'mean.psiL', 'mean.psiD', 'mean.pT', 'mean.pL', 'mean.pD', 'z')
 
-# Call JAGS ~ 10 hrs for 1000 iter (!)
+# Call JAGS ~ 10 hrs for 1000 iter (!) - so you need a good machine to run longer iterations
 outMod <- jags(bdata, inits, params, 'intModel.txt', n.chains=3, n.adapt=5000, n.burnin=1000, n.iter=50000, n.thin=20, parallel=TRUE)
 
 print(outMod)
