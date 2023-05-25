@@ -154,7 +154,7 @@ model{
 	}
 	
 	# (3) Specify linear models for the paramters in lsv and rdm
-	# Linear models for the occupancy parameters
+	# Linear models for the occupancy parameters using matrix multiplication
 	
 	# ... for states T, L, and D
 	psiT[i] <- inprod( betaT, psi_cov[i, ] )
