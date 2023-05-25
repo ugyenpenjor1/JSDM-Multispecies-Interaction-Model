@@ -40,7 +40,6 @@ Trail <- dataList1$covars[, 'trail']
 
 # Convert to matrix
 Trail <- matrix(cbind(rep(Trail, 4)), ncol=4)
-
 Disturb <- matrix(cbind(rep(Disturb, 4)), ncol=4)
 
 # Condense multi-species detection array to be site x survey
@@ -94,7 +93,7 @@ str( bdata <- list(y=ycat, psi_cov=psi_cov,
 # Set initial values
 # Get the maximum possible states across all potential surveys at a site
 zinit <- apply(y, c(1,3), sum, na.rm=TRUE)
-zinit[zinit > 1] <- 1           # convert to binary
+zinit[zinit > 1] <- 1          # convert to binary
 
 # Convert to a category
 zcat <- apply(zinit, 1, paste, collapse = "")
