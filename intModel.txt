@@ -45,12 +45,12 @@ model{
 	# (1) Basic hierarchical model: states and observations
 	# Latent state model
 	for(i in 1:nsites) {
-		z[i] ~ dcat( lsv[i, ( 1:ncat )] )
+		z[i] ~ dcat( lsv[i, ( 1:ncat )] )   # can also use dmulti() which may run faster
 	}
 	# Detection model
 	for(i in 1:nsites) {
 		for(j in 1:nsurveys) {
-			y[i, j] ~ dcat( rdm[i, j, ( 1:ncat ), z[i] ] )
+			y[i, j] ~ dcat( rdm[i, j, ( 1:ncat ), z[i] ] )  
 		}
 	}
 	
