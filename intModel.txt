@@ -44,157 +44,157 @@ model{
 	# Likelihood
 	# (1) Basic hierarchical model: states and observations
 	# Latent state model
-	for(i in 1:nsites) {
-		z[i] ~ dcat( lsv[i, ( 1:ncat )] )   # can also use dmulti() which may run faster
+	for(site in 1:nsites) {
+		z[site] ~ dcat( lsv[site, ( 1:ncat )] )   # can also use dmulti() which may run faster
 	}
 	# Detection model
-	for(i in 1:nsites) {
-		for(j in 1:nsurveys) {
-			y[i, j] ~ dcat( rdm[i, j, ( 1:ncat ), z[i] ] )  
+	for(site in 1:nsites) {
+		for(survey in 1:nsurveys) {
+			y[site, survey] ~ dcat( rdm[site, survey, ( 1:ncat ), z[site] ] )  
 		}
 	}
 	
 	# (2) Define the latent state vector and the observation matrices
-	for(i in 1:nsites) {
+	for(site in 1:nsites) {
 		# Latent state probabilities in latent state vector (lsv)
 		# Probabilities for each state
-		lsv[i, 1] <- 1   #------------------------------------------| U
-		lsv[i, 2] <- exp( psiT[i] )   #-----------------------------| T
-		lsv[i, 3] <- exp( psiL[i] )   #-----------------------------| L
-		lsv[i, 4] <- exp( psiD[i] )   #-----------------------------| D
-		lsv[i, 5] <- exp( psiTL[i] )   #----------------------------| TL
-		lsv[i, 6] <- exp( psiLD[i] )   #----------------------------| LD
-		lsv[i, 7] <- exp( psiTD[i] )   #----------------------------| TD
-		lsv[i, 8] <- exp( psiTLD[i] )   #---------------------------| TLD
+		lsv[site, 1] <- 1   #------------------------------------------| U
+		lsv[site, 2] <- exp( psiT[site] )   #-----------------------------| T
+		lsv[site, 3] <- exp( psiL[site] )   #-----------------------------| L
+		lsv[site, 4] <- exp( psiD[site] )   #-----------------------------| D
+		lsv[site, 5] <- exp( psiTL[site] )   #----------------------------| TL
+		lsv[site, 6] <- exp( psiLD[site] )   #----------------------------| LD
+		lsv[site, 7] <- exp( psiTD[site] )   #----------------------------| TD
+		lsv[site, 8] <- exp( psiTLD[site] )   #---------------------------| TLD
 
-	for(j in 1:nsurveys) {
+	for(survey in 1:nsurveys) {
 		# Detection matrix (OS = observed state, TS = true state)
 		# rdm = rho detection matrix. Each row sums to 1
 		# OS along rows, TS along columns
 		
 		# True state = U
-		rdm[i, j, 1, 1] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 1] <- 0   #-----------------------------------| OS = T
-		rdm[i, j, 3, 1] <- 0   #-----------------------------------| OS = L
-		rdm[i, j, 4, 1] <- 0   #-----------------------------------| OS = D
-		rdm[i, j, 5, 1] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 1] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 1] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 1] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 1] <- 1   #-----------------------------------| OS = U
+		rdm[site, survey, 2, 1] <- 0   #-----------------------------------| OS = T
+		rdm[site, survey, 3, 1] <- 0   #-----------------------------------| OS = L
+		rdm[site, survey, 4, 1] <- 0   #-----------------------------------| OS = D
+		rdm[site, survey, 5, 1] <- 0   #-----------------------------------| OS = TL
+		rdm[site, survey, 6, 1] <- 0   #-----------------------------------| OS = LD
+		rdm[site, survey, 7, 1] <- 0   #-----------------------------------| OS = TD
+		rdm[site, survey, 8, 1] <- 0   #-----------------------------------| OS = TLD
 		
 		# True state = T
-		rdm[i, j, 1, 2] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 2] <- exp( rhoT[i, j] )   #-------------------| OS = T
-		rdm[i, j, 3, 2] <- 0   #-----------------------------------| OS = L
-		rdm[i, j, 4, 2] <- 0   #-----------------------------------| OS = D
-		rdm[i, j, 5, 2] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 2] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 2] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 2] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 2] <- 1   #-----------------------------------| OS = U
+		rdm[site, survey, 2, 2] <- exp( rhoT[site, survey] )   #-----------| OS = T
+		rdm[site, survey, 3, 2] <- 0   #-----------------------------------| OS = L
+		rdm[site, survey, 4, 2] <- 0   #-----------------------------------| OS = D
+		rdm[site, survey, 5, 2] <- 0   #-----------------------------------| OS = TL
+		rdm[site, survey, 6, 2] <- 0   #-----------------------------------| OS = LD
+		rdm[site, survey, 7, 2] <- 0   #-----------------------------------| OS = TD
+		rdm[site, survey, 8, 2] <- 0   #-----------------------------------| OS = TLD
 		
 		# True state = L
-		rdm[i, j, 1, 3] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 3] <- 0   #-----------------------------------| OS = T
-		rdm[i, j, 3, 3] <- exp( rhoL[i, j] )   #-------------------| OS = L
-		rdm[i, j, 4, 3] <- 0   #-----------------------------------| OS = D
-		rdm[i, j, 5, 3] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 3] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 3] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 3] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 3] <- 1   #-----------------------------------| OS = U
+		rdm[site, survey, 2, 3] <- 0   #-----------------------------------| OS = T
+		rdm[site, survey, 3, 3] <- exp( rhoL[site, survey] )   #-----------| OS = L
+		rdm[site, survey, 4, 3] <- 0   #-----------------------------------| OS = D
+		rdm[site, survey, 5, 3] <- 0   #-----------------------------------| OS = TL
+		rdm[site, survey, 6, 3] <- 0   #-----------------------------------| OS = LD
+		rdm[site, survey, 7, 3] <- 0   #-----------------------------------| OS = TD
+		rdm[site, survey, 8, 3] <- 0   #-----------------------------------| OS = TLD
 		
 		# True state = D
-		rdm[i, j, 1, 4] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 4] <- 0   #-----------------------------------| OS = T
-		rdm[i, j, 3, 4] <- 0   #-----------------------------------| OS = L
-		rdm[i, j, 4, 4] <- exp( rhoD[i, j] )   #-------------------| OS = D
-		rdm[i, j, 5, 4] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 4] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 4] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 4] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 4] <- 1   #-----------------------------------| OS = U
+		rdm[site, survey, 2, 4] <- 0   #-----------------------------------| OS = T
+		rdm[site, survey, 3, 4] <- 0   #-----------------------------------| OS = L
+		rdm[site, survey, 4, 4] <- exp( rhoD[site, survey] )   #-----------| OS = D
+		rdm[site, survey, 5, 4] <- 0   #-----------------------------------| OS = TL
+		rdm[site, survey, 6, 4] <- 0   #-----------------------------------| OS = LD
+		rdm[site, survey, 7, 4] <- 0   #-----------------------------------| OS = TD
+		rdm[site, survey, 8, 4] <- 0   #-----------------------------------| OS = TLD
 		
 		# True state = TL
-		rdm[i, j, 1, 5] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 5] <- exp( rhoTL[i, j] )   #------------------| OS = T
-		rdm[i, j, 3, 5] <- exp( rhoLT[i, j] )   #------------------| OS = L
-		rdm[i, j, 4, 5] <- 0   #-----------------------------------| OS = D
-		rdm[i, j, 5, 5] <- exp( rhoTL[i, j] + rhoLT[i, j] )   #----| OS = TL
-		rdm[i, j, 6, 5] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 5] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 5] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 5] <- 1   #---------------------------------------------------| OS = U
+		rdm[site, survey, 2, 5] <- exp( rhoTL[site, survey] )   #--------------------------| OS = T
+		rdm[site, survey, 3, 5] <- exp( rhoLT[site, survey] )   #--------------------------| OS = L
+		rdm[site, survey, 4, 5] <- 0   #---------------------------------------------------| OS = D
+		rdm[site, survey, 5, 5] <- exp( rhoTL[site, survey] + rhoLT[site, survey] )   #----| OS = TL
+		rdm[site, survey, 6, 5] <- 0   #---------------------------------------------------| OS = LD
+		rdm[site, survey, 7, 5] <- 0   #---------------------------------------------------| OS = TD
+		rdm[site, survey, 8, 5] <- 0   #---------------------------------------------------| OS = TLD
 		
 		# True state = LD
-		rdm[i, j, 1, 6] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 6] <- 0   #-----------------------------------| OS = T
-		rdm[i, j, 3, 6] <- exp( rhoLD[i, j] )   #------------------| OS = L
-		rdm[i, j, 4, 6] <- exp( rhoDL[i, j] )   #------------------| OS = D
-		rdm[i, j, 5, 6] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 6] <- exp( rhoLD[i, j] + rhoDL[i, j] )   #----| OS = LD
-		rdm[i, j, 7, 6] <- 0   #-----------------------------------| OS = TD
-		rdm[i, j, 8, 6] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 6] <- 1   #---------------------------------------------------| OS = U
+		rdm[site, survey, 2, 6] <- 0   #---------------------------------------------------| OS = T
+		rdm[site, survey, 3, 6] <- exp( rhoLD[site, survey] )   #--------------------------| OS = L
+		rdm[site, survey, 4, 6] <- exp( rhoDL[site, survey] )   #--------------------------| OS = D
+		rdm[site, survey, 5, 6] <- 0   #---------------------------------------------------| OS = TL
+		rdm[site, survey, 6, 6] <- exp( rhoLD[site, survey] + rhoDL[site, survey] )   #----| OS = LD
+		rdmsitei, survey, 7, 6] <- 0   #---------------------------------------------------| OS = TD
+		rdm[site, survey, 8, 6] <- 0   #---------------------------------------------------| OS = TLD
 		
 		# True state = TD
-		rdm[i, j, 1, 7] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 7] <- exp( rhoTD[i, j] )   #------------------| OS = T
-		rdm[i, j, 3, 7] <- 0   #-----------------------------------| OS = L
-		rdm[i, j, 4, 7] <- exp( rhoDT[i, j] )   #------------------| OS = D
-		rdm[i, j, 5, 7] <- 0   #-----------------------------------| OS = TL
-		rdm[i, j, 6, 7] <- 0   #-----------------------------------| OS = LD
-		rdm[i, j, 7, 7] <- exp( rhoTD[i, j] + rhoDT[i, j] )   #----| OS = TD
-		rdm[i, j, 8, 7] <- 0   #-----------------------------------| OS = TLD
+		rdm[site, survey, 1, 7] <- 1   #---------------------------------------------------| OS = U
+		rdm[site, survey, 2, 7] <- exp( rhoTD[site, survey] )   #--------------------------| OS = T
+		rdm[site, survey, 3, 7] <- 0   #---------------------------------------------------| OS = L
+		rdm[site, survey, 4, 7] <- exp( rhoDT[site, survey] )   #--------------------------| OS = D
+		rdm[site, survey, 5, 7] <- 0   #---------------------------------------------------| OS = TL
+		rdm[site, survey, 6, 7] <- 0   #---------------------------------------------------| OS = LD
+		rdm[site, survey, 7, 7] <- exp( rhoTD[site, survey] + rhoDT[site, survey] )   #----| OS = TD
+		rdm[site, survey, 8, 7] <- 0   #---------------------------------------------------| OS = TLD
 		
 		# True state = TLD
-		rdm[i, j, 1, 8] <- 1   #-----------------------------------| OS = U
-		rdm[i, j, 2, 8] <- exp( rhoTLD[i, j] )   #-----------------| OS = T
-		rdm[i, j, 3, 8] <- exp( rhoLTD[i, j] )   #-----------------| OS = L
-		rdm[i, j, 4, 8] <- exp( rhoDTL[i, j] )   #-----------------| OS = D
-		rdm[i, j, 5, 8] <- exp( rhoTLD[i, j] + rhoLTD[i, j] )   #--| OS = TL
-		rdm[i, j, 6, 8] <- exp( rhoLTD[i, j] + rhoDTL[i, j] )   #--| OS = LD
-		rdm[i, j, 7, 8] <- exp( rhoTLD[i, j] + rhoDTL[i, j] )   #--| OS = TD
-		rdm[i, j, 8, 8] <- exp( rhoTLD[i, j] + rhoLTD[i, j] + rhoDTL[i, j] )   #-| OS = TLD
+		rdm[site, survey, 1, 8] <- 1   #-------------------------------------------------------------------------| OS = U
+		rdm[site, survey, 2, 8] <- exp( rhoTLD[site, survey] )   #-----------------------------------------------| OS = T
+		rdm[site, survey, 3, 8] <- exp( rhoLTD[site, survey] )   #-----------------------------------------------| OS = L
+		rdm[site, survey, 4, 8] <- exp( rhoDTL[site, survey] )   #-----------------------------------------------| OS = D
+		rdm[site, survey, 5, 8] <- exp( rhoTLD[site, survey] + rhoLTD[site, survey] )   #------------------------| OS = TL
+		rdm[site, survey, 6, 8] <- exp( rhoLTD[site, survey] + rhoDTL[site, survey] )   #------------------------| OS = LD
+		rdm[site, survey, 7, 8] <- exp( rhoTLD[site, survey] + rhoDTL[site, survey] )   #------------------------| OS = TD
+		rdm[site, survey, 8, 8] <- exp( rhoTLD[site, survey] + rhoLTD[site, survey] + rhoDTL[site, survey] )   #-| OS = TLD
 	}
 	
 	# (3) Specify linear models for the paramters in lsv and rdm
 	# Linear models for the occupancy parameters using matrix multiplication
 	
 	# ... for states T, L, and D
-	psiT[i] <- inprod( betaT, psi_cov[i, ] )
-	psiL[i] <- inprod( betaL, psi_cov[i, ] )
-	psiD[i] <- inprod( betaD, psi_cov[i, ] )
+	psiT[site] <- inprod( betaT, psi_cov[site, ] )
+	psiL[site] <- inprod( betaL, psi_cov[site, ] )
+	psiD[site] <- inprod( betaD, psi_cov[site, ] )
 	
 	# ... for states TL, LD, TD (in that order)
-	psiTL[i] <- psiT[i] + psiL[i] + inprod( betaTL, psi_inxs_cov[i, ] )
-	psiLD[i] <- psiL[i] + psiD[i] + inprod( betaLD, psi_inxs_cov[i, ] )
-	psiTD[i] <- psiT[i] + psiD[i] + inprod( betaTD, psi_inxs_cov[i, ] )
+	psiTL[site] <- psiT[site] + psiL[site] + inprod( betaTL, psi_inxs_cov[site, ] )
+	psiLD[site] <- psiL[site] + psiD[site] + inprod( betaLD, psi_inxs_cov[site, ] )
+	psiTD[site] <- psiT[site] + psiD[site] + inprod( betaTD, psi_inxs_cov[site, ] )
 	
 	# ... for state TLD
-	psiTLD[i] <- psiT[i] + psiL[i] + psiD[i] + 
-				      inprod( betaTL, psi_inxs_cov[i, ] ) + 
-				      inprod( betaLD, psi_inxs_cov[i, ] ) + 
-				      inprod( betaTD, psi_inxs_cov[i, ] )
+	psiTLD[site] <- psiT[site] + psiL[site] + psiD[site] + 
+				      inprod( betaTL, psi_inxs_cov[site, ] ) + 
+				      inprod( betaLD, psi_inxs_cov[site, ] ) + 
+				      inprod( betaTD, psi_inxs_cov[site, ] )
 	
 	
 	# Linear models for the detection parameters
-	# => Here we could specifiy detection interactions as well
-	  for(j in 1:nsurveys) {
+	# => Here we could specify detection interactions as well
+	  for(survey in 1:nsurveys) {
 	  	# Baseline detection linear predictors
 	  	
-	  	#  do not incorporate interactions.
-	  	rhoT[i, j] <- inprod( alphaT, rho_cov[i, j, ] )
-	  	rhoL[i, j] <- inprod( alphaL, rho_cov[i, j, ] )
-	  	rhoD[i, j] <- inprod( alphaD, rho_cov[i, j, ] )
+	  	# do not incorporate interactions.
+	  	rhoT[site, survey] <- inprod( alphaT, rho_cov[site, survey, ] )
+	  	rhoL[site, survey] <- inprod( alphaL, rho_cov[site, survey, ] )
+	  	rhoD[site, survey] <- inprod( alphaD, rho_cov[site, survey, ] )
 	  	
 	  	# Asymmetric interactions between all 3 species
-	  	rhoTL[i, j] <- rhoT[i, j]
-	  	rhoTD[i, j] <- rhoT[i, j]
-	  	rhoLT[i, j] <- rhoL[i, j]
-	  	rhoLD[i, j] <- rhoL[i, j]
-	  	rhoDT[i, j] <- rhoD[i, j]
-	  	rhoDL[i, j] <- rhoD[i, j]
+	  	rhoTL[site, survey] <- rhoT[site, survey]
+	  	rhoTD[site, survey] <- rhoT[site, survey]
+	  	rhoLT[site, survey] <- rhoL[site, survey]
+	  	rhoLD[site, survey] <- rhoL[site, survey]
+	  	rhoDT[site, survey] <- rhoD[site, survey]
+	  	rhoDL[site, survey] <- rhoD[site, survey]
 	  	
 	  	# Asymmetric interactions when all 3 species are present
-	  	rhoTLD[i, j] <- rhoT[i, j]
-	  	rhoLTD[i, j] <- rhoL[i, j]
-	  	rhoDTL[i, j] <- rhoD[i, j]
+	  	rhoTLD[site, survey] <- rhoT[site, survey]
+	  	rhoLTD[site, survey] <- rhoL[site, survey]
+	  	rhoDTL[site, survey] <- rhoD[site, survey]
 	  }
   }
 }
