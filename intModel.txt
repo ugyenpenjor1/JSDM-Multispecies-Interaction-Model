@@ -58,7 +58,7 @@ model{
 	for(site in 1:nsites) {
 		# Latent state probabilities in latent state vector (lsv)
 		# Probabilities for each state
-		lsv[site, 1] <- 1   #------------------------------------------| U
+		lsv[site, 1] <- 1   #---------------------------------------------| U
 		lsv[site, 2] <- exp( psiT[site] )   #-----------------------------| T
 		lsv[site, 3] <- exp( psiL[site] )   #-----------------------------| L
 		lsv[site, 4] <- exp( psiD[site] )   #-----------------------------| D
@@ -176,7 +176,8 @@ model{
 	# Linear models for the detection parameters
 	# => Here we could specify detection interactions as well
 	  for(survey in 1:nsurveys) {
-	  	# Baseline detection linear predictors
+	  	
+                # Baseline detection linear predictors
 	  	
 	  	# do not incorporate interactions.
 	  	rhoT[site, survey] <- inprod( alphaT, rho_cov[site, survey, ] )
