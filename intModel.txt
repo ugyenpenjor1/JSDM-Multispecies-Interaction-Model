@@ -4,7 +4,7 @@ model{
 	
 	# Priors
 	# First order psi
-	betaT[1] <- logit(mean.psiT)					# first order (fo) occupancy intercepts
+	betaT[1] <- logit(mean.psiT)		     # first order (fo) occupancy intercepts
 	betaL[1] <- logit(mean.psiL)
 	betaD[1] <- logit(mean.psiD)
 	mean.psiT[1] ~ dunif(0, 1)
@@ -12,14 +12,14 @@ model{
 	mean.psiD[1] ~ dunif(0, 1)
 	
 	# First order psi priors
-	for(fo_psi in 2:nfirst_order_psi) {          # first order (fo) occupancy slopes
+	for(fo_psi in 2:nfirst_order_psi){          # first order (fo) occupancy slopes
 		betaT[fo_psi] ~ dnorm(0, 0.1)
 		betaL[fo_psi] ~ dnorm(0, 0.1)
 		betaD[fo_psi] ~ dnorm(0, 0.1)
 	}
 	
 	# Second order psi priors
-	for(so_psi in 1:nsecond_order_psi) {         
+	for(so_psi in 1:nsecond_order_psi){         
 		betaTL[so_psi] ~ dnorm(0, 0.1)
 		betaTD[so_psi] ~ dnorm(0, 0.1)
 		betaLD[so_psi] ~ dnorm(0, 0.1) 
@@ -32,7 +32,7 @@ model{
 	mean.pT ~ dunif(0, 1)
 	mean.pL ~ dunif(0, 1)
 	mean.pD ~ dunif(0, 1)
-	for(fo_rho in 2:nfirst_order_rho) {        # first order (fo) detection slopes
+	for(fo_rho in 2:nfirst_order_rho){         # first order (fo) detection slopes
 		alphaT[fo_rho] ~ dnorm(0, 0.1)
 		alphaL[fo_rho] ~ dnorm(0, 0.1)
 		alphaD[fo_rho] ~ dnorm(0, 0.1)
@@ -44,18 +44,18 @@ model{
 	# Likelihood
 	# (1) Basic hierarchical model: states and observations
 	# Latent state model
-	for(site in 1:nsites) {
+	for(site in 1:nsites){
 		z[site] ~ dcat( lsv[site, ( 1:ncat )] )   # can also use dmulti() which may run faster
 	}
 	# Detection model
-	for(site in 1:nsites) {
-		for(survey in 1:nsurveys) {
+	for(site in 1:nsites){
+		for(survey in 1:nsurveys){
 			y[site, survey] ~ dcat( rdm[site, survey, ( 1:ncat ), z[site] ] )  
 		}
 	}
 	
 	# (2) Define the latent state vector and the observation matrices
-	for(site in 1:nsites) {
+	for(site in 1:nsites){
 		# Latent state probabilities in latent state vector (lsv)
 		# Probabilities for each state
 		lsv[site, 1] <- 1   #---------------------------------------------| U
@@ -67,7 +67,7 @@ model{
 		lsv[site, 7] <- exp( psiTD[site] )   #----------------------------| TD
 		lsv[site, 8] <- exp( psiTLD[site] )   #---------------------------| TLD
 
-	for(survey in 1:nsurveys) {
+	for(survey in 1:nsurveys){
 		# Detection matrix (OS = observed state, TS = true state)
 		# rdm = rho detection matrix. Each row sums to 1
 		# OS along rows, TS along columns
@@ -153,7 +153,7 @@ model{
 		rdm[site, survey, 8, 8] <- exp( rhoTLD[site, survey] + rhoLTD[site, survey] + rhoDTL[site, survey] )   #-| OS = TLD
 	}
 	
-	# (3) Specify linear models for the paramters in lsv and rdm
+	# (3) Specify linear models for the parameters in lsv and rdm
 	# Linear models for the occupancy parameters using matrix multiplication
 	
 	# ... for states T, L, and D
@@ -172,13 +172,11 @@ model{
 				      inprod( betaLD, psi_inxs_cov[site, ] ) + 
 				      inprod( betaTD, psi_inxs_cov[site, ] )
 	
-	
 	# Linear models for the detection parameters
-	# => Here we could specify detection interactions as well
-	  for(survey in 1:nsurveys) {
+	# Here we could specify detection interactions as well
+	  for(survey in 1:nsurveys){
 	  	
                 # Baseline detection linear predictors
-	  	
 	  	# do not incorporate interactions.
 	  	rhoT[site, survey] <- inprod( alphaT, rho_cov[site, survey, ] )
 	  	rhoL[site, survey] <- inprod( alphaL, rho_cov[site, survey, ] )
