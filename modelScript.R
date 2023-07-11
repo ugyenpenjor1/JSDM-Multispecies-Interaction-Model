@@ -1,7 +1,7 @@
 
 # Multispecies occupancy model for two or more interacting species (Rota et al., 2016 Methods in Ecology and Evolution)
 # Adapted from Kery and Royle, 2021 AHM 2
-# Ugyen Penjor, October 2021
+# Ugyen Penjor, October 2021 with generous support from Late Mike Meredith
 
 # Load packages
 library(AHMbook)
@@ -57,7 +57,6 @@ ycat[ycat == "111"] <- 8               # All three species ('TLD')
 ycat <- apply(ycat, 2, as.numeric)     # check for warnings produced by NAs in observation
 
 # Prepare covariate 
-
 # Marginal occupancy covariates
 psi_cov <- matrix(NA, ncol=6, nrow=nsites)
 psi_cov[, 1] <- 1					# Intercept
