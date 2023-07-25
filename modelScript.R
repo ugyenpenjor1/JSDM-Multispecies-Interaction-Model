@@ -59,7 +59,7 @@ ycat <- apply(ycat, 2, as.numeric)     # check for warnings produced by NAs in o
 # Prepare covariate 
 # Marginal occupancy covariates
 psi_cov <- matrix(NA, ncol=6, nrow=nsites)
-psi_cov[, 1] <- 1					# Intercept
+psi_cov[, 1] <- 1					      # Intercept
 psi_cov[, 2] <- settlement				
 psi_cov[, 3] <- forest
 psi_cov[, 4] <- sambar
@@ -73,12 +73,12 @@ psi_inxs_cov[, 2] <- settlement
 
 # Detection covariate
 rho_cov <- array(NA, dim=c(nsites, nsurveys, 3))
-rho_cov[,, 1] <- 1					# Intercept
+rho_cov[,, 1] <- 1					    # Intercept
 rho_cov[,, 2] <- Trail	
 rho_cov[,, 3] <- Disturb
 
 # Detection - interaction
-rho_inxs_cov <- rep(1, nsites)		# Intercept only
+rho_inxs_cov <- rep(1, nsites)	# Intercept only
 
 # Bundle and summarise data set
 str( bdata <- list(y=ycat, psi_cov=psi_cov,
