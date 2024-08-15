@@ -1,8 +1,8 @@
-# R scripts and data to run multispecies occupancy model for two or more interacting species of Rota *et al.,* 2016 [Methods in Ecology and Evolution] (https://doi.org/10.1111/2041-210X.12587)
+# R scripts and data to replicate multispecies occupancy model for two or more interacting species (Penjor et al., 2022, Proceedings of the Royal Society B)
 
-This repo will demonstrate to load and run the joint species distribution model. The codes are annotated for readability.
+This repo will demonstrate how to load and run the joint species distribution model. The codes are annotated for readability.
 
-For convenience and to remove clutter, the data have been cleaned but for security reasons (because the study species are globally endangered) we do not provide GPS locations. 
+For convenience and to remove clutter, the data have been cleaned but for security reasons (globally endangered species) we do not provide GPS locations. 
 
 Specific files included are:
 
@@ -24,4 +24,4 @@ Details:
 Trail = (binary) coded 1/0 for camera traps placed on- or off-trail
 Disturb = daily encounter rates of humans, livestock and domestic dogs at each camera station
 
-The ***link*** to the open access article is https://royalsocietypublishing.org/doi/10.1098/rspb.2021.2681.
+The ***link*** to the open-access article is https://royalsocietypublishing.org/doi/10.1098/rspb.2021.2681.
