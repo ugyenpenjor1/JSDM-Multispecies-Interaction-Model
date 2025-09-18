@@ -2,7 +2,7 @@
 
 This repo will demonstrate how to load and run the joint species distribution model. The codes are annotated for readability.
 
-For convenience and to remove clutter, the data have been cleaned but for security reasons (globally endangered species) we do not provide GPS locations. 
+For convenience and to remove clutter, the data have been cleaned, but for security reasons (sensitive site location + globally endangered species), we do not share GPS locations. 
 
 Specific files included are:
 
